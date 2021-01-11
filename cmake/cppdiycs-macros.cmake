@@ -6,25 +6,24 @@ function (castxml_compile)
 	cmake_parse_arguments(castxml "" "XML" "SOURCES;INCLUDE_DIRS;TYPES" ${ARGN})
 
     # check existence of required arguments
-    foreach(castxml_ARG_NAME XML;SOURCES;INCLUDE_DIRS)
+    foreach(castxml_ARG_NAME XML;SOURCES)
         if (NOT castxml_${castxml_ARG_NAME})
             message(FATAL_ERROR "Missing argument '${castxml_ARG_NAME}'")
         endif()
     endforeach()    
+
+    get_filename_component(castxml_C_COMPILER ${CMAKE_C_COMPILER} ABSOLUTE)
+    get_filename_component(castxml_CXX_COMPILER ${CMAKE_CXX_COMPILER} ABSOLUTE)
 
 	# create castxml command
 	list(APPEND castxml_CMD --castxml-output=1)
 	if (WIN32)	
 		list(APPEND castxml_CMD --castxml-cc-msvc)
 	else()
-		# TODO
+        list(APPEND castxml_CMD --castxml-cc-gnu)
 	endif()	
-	list(APPEND castxml_CMD "(")
-	if (WIN32)	
-		list(APPEND castxml_CMD "\"C:/Program Files (x86)/Microsoft Visual Studio/2017/Enterprise/VC/Tools/MSVC/14.16.27023/bin/Hostx64/x64/cl.exe\"") # TODO get compiler executable from CMake
-	else()
-		# TODO
-	endif()
+	list(APPEND castxml_CMD "(")    
+    list(APPEND castxml_CMD ${castxml_CXX_COMPILER}) 
 	list(APPEND castxml_CMD -std=c++14)
 	list(APPEND castxml_CMD ")")
 	list(APPEND castxml_CMD -o)
@@ -37,17 +36,19 @@ function (castxml_compile)
         list(APPEND castxml_CMD ${castxml_TYPES})
     endif()	
 	
-	# include directories
-	foreach(castxml_INCLUDE_DIR ${castxml_INCLUDE_DIRS})
-		get_filename_component(castxml_INCLUDE_DIR ${castxml_INCLUDE_DIR} ABSOLUTE)
-		list(APPEND castxml_CMD -I)
-		list(APPEND castxml_CMD ${castxml_INCLUDE_DIR})
-	endforeach()	
+    # optional include directories
+    if(castxml_INCLUDE_DIRS)
+        foreach(castxml_INCLUDE_DIR ${castxml_INCLUDE_DIRS})
+            get_filename_component(castxml_INCLUDE_DIR ${castxml_INCLUDE_DIR} ABSOLUTE)
+            list(APPEND castxml_CMD -I)
+            list(APPEND castxml_CMD ${castxml_INCLUDE_DIR})
+        endforeach()	
+    endif()
 	
 	# input sources
 	list(APPEND castxml_CMD -x)
 	list(APPEND castxml_CMD c++)
-		foreach(castxml_SOURCE ${castxml_SOURCES})
+    foreach(castxml_SOURCE ${castxml_SOURCES})
 		get_filename_component(castxml_SOURCE ${castxml_SOURCE} ABSOLUTE)
 		list(APPEND castxml_CMD ${castxml_SOURCE})
 	endforeach()
@@ -87,7 +88,6 @@ function (python_transform)
     endif()
         
     get_filename_component(python_UTIL_SCRIPT_DIR ${cppdiycs_DIR}/scripts ABSOLUTE)
-    message(STATUS "${python_UTIL_SCRIPT_DIR}")
 
     # transform the xml into c++ code
     add_custom_command(OUTPUT ${python_OUTPUTS}

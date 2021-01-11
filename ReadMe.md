@@ -1,36 +1,124 @@
-# cppdiycs - C/C++ Do It Yourself Code Synthesis
+# cppdiycs - C/C++ DIY Code Synthesis
 
-The purpose of this project is to enable developers to create their own code synthesis' in an uncomplicated and adaptable manor.
+The purpose of this project is to enable developers to create their own code syntheses in an uncomplicated and adaptable manor.
 It is __not__ the goal of this project to provide the most sophisticated generated code. Instead the project can be seen as a library of distinct examples on how to implement an individual code synthesis for specific use cases.
 
-The core functionality is based on the AST XML output of the [CastXML](https://github.com/CastXML/CastXML) compiler. It provides the *C/C++ Abstract Snytax Tree* of the compilation including type names, alignments, function names, parameter types and many more. In many use cases these "top-level" information are sufficient for the code synthesis e.g.:
+The core functionality of this project is based on the AST XML output of the [CastXML](https://github.com/CastXML/CastXML) compiler. It provides the [*C/C++ Abstract Snytax Tree*](https://en.wikipedia.org/wiki/Abstract_syntax_tree) of the compilation comprising type names, alignments, function names, parameter names and types and many more. In many use cases these "top-level" information are sufficient for the code synthesis.
 
-```cpp
-// input 
+## Example Use Case
+
+Generate a *to_string* function for each struct, and/or an *ostream& operator<<(ostream&, const T&)*
+
+## Example Input
+
+```cpp 
 struct Vector3D 
 { 
     double x;
     double y;
     double z;
 };
+```
 
-// generated output A
-std::string to_string(const Vector3D& v) 
+## Example Generated Output A
+
+```cpp 
+std::string to_string(const Vector3D& v) // generated 
 {
     std::stringstream ss;
-    ss << "(" << v.x << "," << v.y << "," << v.z << ")";
+    ss << v.x << "," << v.y << "," << v.z;
     return ss.str();
 }
+```
 
-// generated output B
-ostream& operator<<(ostream& os, const Vector3D& v)
+## Example Generated Output B
+
+```cpp 
+ostream& operator<<(ostream& os, const Vector3D& v) // generated
 {
-    os << "(" << v.x << "," << v.y << "," << v.z << ")";
+    os << v.x << "," << v.y << "," << v.z;
     return os;
 }
 ```
 
 For this use case mostly the names of the struct and fields (types) are relevant. Consider the two generated outputs A and B which are two of many possible ways to realize code generation of the "to_string" use case. The structure of the generated output can be adapted individually, since different code bases need different code synthesis.
+
+## Intermediate CastXML Representation
+
+```xml
+<!-- hint: shortened for readability -->
+<?xml version="1.0"?>
+<CastXML format="1.1.6">
+  <!-- ... -->
+  <Struct id="_1" name="Vector3D" context="_2" location="f1:3" file="f1" line="3" members="_3 _4 _5 _6 _7 _8 _9" size="192" align="64"/>
+  <Field id="_3" name="x" type="_10" context="_1" access="public" location="f1:5" file="f1" line="5" offset="0"/>
+  <Field id="_4" name="y" type="_10" context="_1" access="public" location="f1:6" file="f1" line="6" offset="64"/>
+  <Field id="_5" name="z" type="_10" context="_1" access="public" location="f1:7" file="f1" line="7" offset="128"/>
+  <!-- ... -->
+  <Namespace id="_2" name="::"/>
+  <!-- ... -->
+  <File id="f1" name="transform_to_string.h"/>  
+</CastXML>
+```
+
+### Explanation
+
+- __Struct__ This is the struct's element comprising its name
+- __Field__ These are the struct's field elements with among others its name, referencing the struct via the __context__ attribute
+- __File__ This is the source file of the compilation referenced by via the struct element's __file__ attribute
+
+## Installation
+
+1. Download and build and install the [castxmlcmake](https://github.com/vrcomputing/castxmlcmake) CMake project. 
+    - The installation folder will then define __*castxml_DIR*__
+2. Download and build and install the [cppdiycs](https://github.com/vrcomputing/cppdiycs) CMake project.
+    - The installation folder will then define __*cppdiycs_DIR*__
+3. Integrate both installations into your project using the following CMake find_package(...) calls
+
+```cmake
+find_package(castxml PATHS ${castxml_DIR} NO_DEFAULT_PATH REQUIRED)
+find_package(cppdiycs PATHS ${cppdiycs_DIR} NO_DEFAULT_PATH REQUIRED)
+```
+
+## Usage 
+
+After successful installation use the *castxml_compile* and *python_transform* to compiler and tranform your code
+
+### Example 
+
+```cmake
+castxml_compile(XML ${OUTPUT_XML} 
+                SOURCES ${INPUT_HPP} 
+				INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR} 
+				TYPES Calculator Vector3D)
+```
+
+#### Explanation
+
+- __XML__ (*required*) defines the output intermediate XML file
+- __SOURCES__ (*required*) defines the input C/C++ source file to be compiled
+- __INCLUDE_DIRS__ (*optional*) defines the input C/C++ source file to be compiled
+- __TYPES__ (*optional*) defines the input C/C++ source file to be compiled and optimizes the output
+
+```cmake
+python_transform(SCRIPT main.py
+                 INPUTS  ${OUTPUT_XML}
+				 OUTPUTS ${OUTPUT_HPP} ${OUTPUT_CPP}
+				 ARGS
+				 --xml ${OUTPUT_XML}
+				 --source ${INPUT_HPP}
+				 --hpp ${OUTPUT_HPP}
+				 --cpp ${OUTPUT_CPP}
+				 --type Calculator Vector3D)
+```
+
+#### Explanation
+
+- __SCRIPT__ (*required*) define the name of the tranformation Python script
+- __INPUTS__ (*required*) defines the names of the dependant input files e.g. the previously generatex XML file
+- __OUTPUTS__ (*required*) defines the names of generated output files e.g. header and source files
+- __ARGS__ (*optional*) defines additional arguments which will be forwarded to the Python script
+    - the command line arguments depend on your implementation
 
 ## Focus
 
@@ -45,4 +133,6 @@ For this use case mostly the names of the struct and fields (types) are relevant
 ## Dependencies
 
 - [CastXML](https://github.com/CastXML/CastXML) Version 0.3.6
+    - [castxmlcmake](https://github.com/vrcomputing/castxmlcmake) provides CastXML binaries as CMake package by downloading them from [CastXMLSuperbuild](https://github.com/CastXML/CastXMLSuperbuild)
 - Python version depends on your scripts (Version 3.9 tested)
+- CMake (Version 3.18 tested)
