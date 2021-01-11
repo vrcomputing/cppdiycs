@@ -82,7 +82,9 @@ find_package(cppdiycs PATHS ${cppdiycs_DIR} NO_DEFAULT_PATH REQUIRED)
 
 ## Usage 
 
-After successful installation use the *castxml_compile* and *python_transform* to compiler and tranform your code
+1. use the CMake function *castxml_compile* to compiler your sources and get the *xml file
+2. use the CMake function *python_transform* to tranform your *.xml file as desired
+    - write your own *.py script beforehand to parse the *.xml file
 
 ### Example 
 
@@ -98,18 +100,21 @@ castxml_compile(XML ${OUTPUT_XML}
 - __XML__ (*required*) defines the output intermediate XML file
 - __SOURCES__ (*required*) defines the input C/C++ source file to be compiled
 - __INCLUDE_DIRS__ (*optional*) defines the input C/C++ source file to be compiled
-- __TYPES__ (*optional*) defines the input C/C++ source file to be compiled and optimizes the output
+- __TYPES__ (*optional*) optimizes the output to these types (C++ namespaces must be added)    
 
 ```cmake
-python_transform(SCRIPT main.py
+python_transform(SCRIPT transform.py
                  INPUTS  ${OUTPUT_XML}
-				 OUTPUTS ${OUTPUT_HPP} ${OUTPUT_CPP}
-				 ARGS
+				 OUTPUTS ${OUTPUT_HPP} ${OUTPUT_CPP}                 
+				 ARGS                 
+                 # optional/script specific
 				 --xml ${OUTPUT_XML}
 				 --source ${INPUT_HPP}
 				 --hpp ${OUTPUT_HPP}
 				 --cpp ${OUTPUT_CPP}
-				 --type Calculator Vector3D)
+				 --type Calculator Vector3D
+                 # optional/script specific
+                 )
 ```
 
 #### Explanation
@@ -119,6 +124,38 @@ python_transform(SCRIPT main.py
 - __OUTPUTS__ (*required*) defines the names of generated output files e.g. header and source files
 - __ARGS__ (*optional*) defines additional arguments which will be forwarded to the Python script
     - the command line arguments depend on your implementation
+
+### Transformation
+
+```python
+# basic CastXML output parsing
+import sys
+from lxml import etree
+
+tree = etree.parse(sys.argv[1]) # argv[1] == input xml file
+root = tree.getroot()
+
+structs = root.xpath("Struct[@name = 'Vector3D']")
+for struct_element in structs:
+    print(struct_element.get('name'))    
+    fields = root.xpath("Field[@context = '%s']" % struct_element.get('id'))    
+    for field_element in fields:
+        field_type_id = field_element.get('type')
+        field_name = field_element.get('name')
+        field_type = root.find("FundamentalType[@id = '%s']" % field_type_id).get('name')
+        print(' - %s : %s' % (field_name, field_type))
+```
+
+#### Explanation
+
+This Python script uses [XPATH](https://www.w3schools.com/xml/xpath_intro.asp) queries to navigate to the structs of interest, in this case only the struct __Vector3D__. Afterwards it navigates to all fields and prints their names and type names:
+
+```
+Vector3D
+ - x : double
+ - y : double
+ - z : double
+```
 
 ## Focus
 

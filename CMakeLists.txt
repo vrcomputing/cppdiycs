@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.10)
 
 project(cppdiycs)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
-find_package(cppdiycs PATHS cmake NO_DEFAULT_PATH)
+find_package(cppdiycs REQUIRED PATHS cmake NO_DEFAULT_PATH)
 
 add_subdirectory(cmake)
 add_subdirectory(src)
