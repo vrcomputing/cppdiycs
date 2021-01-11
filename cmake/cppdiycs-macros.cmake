@@ -8,8 +8,6 @@ if(NOT python_EXECUTABLE)
     message(FATAL_ERROR "python executable not found")
 endif()
 
-find_package(castxml REQUIRED)
-
 function (castxml_compile)
 
     cmake_parse_arguments(castxml "" "XML" "SOURCES;INCLUDE_DIRS;TYPES" ${ARGN})
@@ -70,7 +68,7 @@ function (castxml_compile)
 
         # compile the sources into an xml
         add_custom_command(OUTPUT ${castxml_XML}
-                                           COMMAND $<TARGET_FILE:castxml> ${castxml_CMD}
+                                           COMMAND ${castxml_EXECUTABLE} ${castxml_CMD}
                                            DEPENDS ${castxml_SOURCES}
                                            USES_TERMINAL)
 
@@ -103,8 +101,7 @@ function (python_transform)
 
     # transform the xml into c++ code
     add_custom_command(OUTPUT ${python_OUTPUTS}
-                       COMMAND set PYTHONPATH=${python_UTIL_SCRIPT_DIR}
-                       COMMAND ${python_EXECUTABLE} ${Python_CMD}
+                       COMMAND ${CMAKE_COMMAND} -E env PYTHONPATH=${python_UTIL_SCRIPT_DIR} ${python_EXECUTABLE} ${Python_CMD}
                        DEPENDS ${python_INPUTS}
                        USES_TERMINAL)
 endfunction()
