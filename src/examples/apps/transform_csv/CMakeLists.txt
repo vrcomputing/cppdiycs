@@ -1,11 +1,10 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.10)
 
 set(TARGET_NAME transform_csv)
 
 project(${TARGET_NAME})
 
-find_package(Python REQUIRED COMPONENTS Interpreter)
-find_package(castxml REQUIRED)
+find_package(cppdiycs REQUIRED)
 
 add_executable(${TARGET_NAME} 
     main.cpp
@@ -16,9 +15,9 @@ set_property(TARGET ${TARGET_NAME} PROPERTY FOLDER "examples")
 
 # working with absolute paths/filenames jsut to be absolutely safe
 get_filename_component(INPUT_HPP  ${CMAKE_CURRENT_LIST_DIR}/transform_csv.h ABSOLUTE)
-get_filename_component(OUTPUT_HPP ${CMAKE_CURRENT_BINARY_DIR}/generated/transform_csv.hpp ABSOLUTE)
-get_filename_component(OUTPUT_CPP ${CMAKE_CURRENT_BINARY_DIR}/generated/transform_csv.cpp ABSOLUTE)
-get_filename_component(OUTPUT_XML ${CMAKE_CURRENT_BINARY_DIR}/generated/transform_csv.xml ABSOLUTE)
+get_filename_component(OUTPUT_HPP ${CMAKE_CURRENT_BINARY_DIR}/transform_csv.hpp ABSOLUTE)
+get_filename_component(OUTPUT_CPP ${CMAKE_CURRENT_BINARY_DIR}/transform_csv.cpp ABSOLUTE)
+get_filename_component(OUTPUT_XML ${CMAKE_CURRENT_BINARY_DIR}/transform_csv.xml ABSOLUTE)
 
 castxml_compile(XML ${OUTPUT_XML} 
                 SOURCES ${INPUT_HPP} 
@@ -37,7 +36,7 @@ python_transform(SCRIPT transform_csv.py
 				 --delimiter "\",\"")
 
 # add the generated files to the target 
-target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR}/generated)
+target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 target_sources(${TARGET_NAME} PRIVATE ${OUTPUT_HPP} ${OUTPUT_CPP} ${OUTPUT_XML})
 
 # group the generated files into folders
