@@ -1,0 +1,1 @@
+install(FILES cppdiycs.py DESTINATION cppdiycs/scripts)
