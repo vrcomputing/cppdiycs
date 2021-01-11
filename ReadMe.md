@@ -5,9 +5,23 @@ It is __not__ the goal of this project to provide the most sophisticated generat
 
 The core functionality of this project is based on the AST XML output of the [CastXML](https://github.com/CastXML/CastXML) compiler. It provides the [*C/C++ Abstract Snytax Tree*](https://en.wikipedia.org/wiki/Abstract_syntax_tree) of the compilation comprising type names, alignments, function names, parameter names and types and many more. In many use cases these "top-level" information are sufficient for the code synthesis.
 
+# Use Cases
+
+- Input Reader/Output Writer
+- Encoding/Decoding e.g. CSV, XML, JSON, ...
+- Serialization/Deserialization e.g. binary or string representation
+- Schema synthesis e.g. XSD, JSON, ...
+- Test suite/case synthesis e.g. for googletest, Catch2, ...
+- PIMPL/D-Pointer synthesis for implementation hiding
+- REST API synthesis for methods and functions
+- Custom reflection synthesis
+- C-bindings for C++ classes/structs
+- RPC synthesis for functions/methods
+- ...
+
 ## Example Use Case
 
-Generate a *to_string* function for each struct, and/or an *ostream& operator<<(ostream&, const T&)*
+Generate a *__to_string__* function for the struct __Vector3D__, and/or an *__ostream& operator<<(ostream&, const T&)__*
 
 ## Example Input
 
@@ -172,4 +186,4 @@ Vector3D
 - [CastXML](https://github.com/CastXML/CastXML) Version 0.3.6
     - [castxmlcmake](https://github.com/vrcomputing/castxmlcmake) provides CastXML binaries as CMake package by downloading them from [CastXMLSuperbuild](https://github.com/CastXML/CastXMLSuperbuild)
 - Python version depends on your scripts (Version 3.9 tested)
-- CMake (Version 3.18 tested)
+- CMake Version 3.10
