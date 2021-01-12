@@ -104,9 +104,9 @@ find_package(cppdiycs PATHS ${cppdiycs_DIR} NO_DEFAULT_PATH REQUIRED)
 
 ```cmake
 castxml_compile(XML ${OUTPUT_XML} 
-                SOURCES ${INPUT_HPP} 
-				INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR} 
-				TYPES Calculator Vector3D)
+                SOURCES ${INPUT_HPP}
+                INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR} 
+                TYPES Calculator Vector3D)
 ```
 
 #### Explanation
@@ -119,14 +119,14 @@ castxml_compile(XML ${OUTPUT_XML}
 ```cmake
 python_transform(SCRIPT transform.py
                  INPUTS  ${OUTPUT_XML}
-				 OUTPUTS ${OUTPUT_HPP} ${OUTPUT_CPP}                 
-				 ARGS                 
+                 OUTPUTS ${OUTPUT_HPP} ${OUTPUT_CPP}                 
+                 ARGS                 
                  # optional/script specific
-				 --xml ${OUTPUT_XML}
-				 --source ${INPUT_HPP}
-				 --hpp ${OUTPUT_HPP}
-				 --cpp ${OUTPUT_CPP}
-				 --type Calculator Vector3D
+                 --xml ${OUTPUT_XML}
+                 --source ${INPUT_HPP}
+                 --hpp ${OUTPUT_HPP}
+                 --cpp ${OUTPUT_CPP}
+                 --type Calculator Vector3D
                  # optional/script specific
                  )
 ```
@@ -151,8 +151,8 @@ root = tree.getroot()
 
 structs = root.xpath("Struct[@name = 'Vector3D']")
 for struct_element in structs:
-    print(struct_element.get('name'))    
-    fields = root.xpath("Field[@context = '%s']" % struct_element.get('id'))    
+    print(struct_element.get('name'))
+    fields = root.xpath("Field[@context = '%s']" % struct_element.get('id'))
     for field_element in fields:
         field_type_id = field_element.get('type')
         field_name = field_element.get('name')
