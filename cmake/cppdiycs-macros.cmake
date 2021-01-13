@@ -19,27 +19,30 @@ function (castxml_compile)
         endif()
     endforeach()
 
+    get_filename_component(castxml_XML ${castxml_XML} DIRECTORY)
+    file(MAKE_DIRECTORY ${castxml_XML})
+
     get_filename_component(castxml_C_COMPILER ${CMAKE_C_COMPILER} ABSOLUTE)
-    get_filename_component(castxml_CXX_COMPILER ${CMAKE_CXX_COMPILER} ABSOLUTE)
+    get_filename_component(castxml_CXX_COMPILER ${CMAKE_CXX_COMPILER} ABSOLUTE)    
 
-        # create castxml command
-        list(APPEND castxml_CMD --castxml-output=1)
-        if (WIN32)
-                list(APPEND castxml_CMD --castxml-cc-msvc)
-                list(APPEND castxml_CMD "\"(\"")
-                list(APPEND castxml_CMD ${castxml_CXX_COMPILER})
-                list(APPEND castxml_CMD /std:c++14)
-                list(APPEND castxml_CMD "\")\"")
-        else()
-                list(APPEND castxml_CMD --castxml-cc-gnu)
-                list(APPEND castxml_CMD "\"(\"")
-                list(APPEND castxml_CMD ${castxml_CXX_COMPILER})
-                list(APPEND castxml_CMD -std=c++14)
-                list(APPEND castxml_CMD "\")\"")
-        endif()
+    # create castxml command
+    list(APPEND castxml_CMD --castxml-output=1)
+    if (WIN32)
+            list(APPEND castxml_CMD --castxml-cc-msvc)
+            list(APPEND castxml_CMD "\"(\"")
+            list(APPEND castxml_CMD ${castxml_CXX_COMPILER})
+            list(APPEND castxml_CMD /std:c++14)
+            list(APPEND castxml_CMD "\")\"")
+    else()
+            list(APPEND castxml_CMD --castxml-cc-gnu)
+            list(APPEND castxml_CMD "\"(\"")
+            list(APPEND castxml_CMD ${castxml_CXX_COMPILER})
+            list(APPEND castxml_CMD -std=c++14)
+            list(APPEND castxml_CMD "\")\"")
+    endif()
 
-        list(APPEND castxml_CMD -o)
-        list(APPEND castxml_CMD ${castxml_XML})
+    list(APPEND castxml_CMD -o)
+    list(APPEND castxml_CMD ${castxml_XML})
 
     # optional types argument
     if(castxml_TYPES)
@@ -48,29 +51,29 @@ function (castxml_compile)
         list(APPEND castxml_CMD ${castxml_TYPES})
     endif()
 
-        # include directories
-        foreach(castxml_INCLUDE_DIR ${castxml_INCLUDE_DIRS})
-                get_filename_component(castxml_INCLUDE_DIR ${castxml_INCLUDE_DIR} ABSOLUTE)
-                list(APPEND castxml_CMD -I)
-                list(APPEND castxml_CMD ${castxml_INCLUDE_DIR})
-        endforeach()
+    # include directories
+    foreach(castxml_INCLUDE_DIR ${castxml_INCLUDE_DIRS})
+            get_filename_component(castxml_INCLUDE_DIR ${castxml_INCLUDE_DIR} ABSOLUTE)
+            list(APPEND castxml_CMD -I)
+            list(APPEND castxml_CMD ${castxml_INCLUDE_DIR})
+    endforeach()
 
-        # input sources
-        list(APPEND castxml_CMD -x)
-        list(APPEND castxml_CMD c++)
-                foreach(castxml_SOURCE ${castxml_SOURCES})
-                get_filename_component(castxml_SOURCE ${castxml_SOURCE} ABSOLUTE)
-                list(APPEND castxml_CMD ${castxml_SOURCE})
-        endforeach()
+    # input sources
+    list(APPEND castxml_CMD -x)
+    list(APPEND castxml_CMD c++)
+            foreach(castxml_SOURCE ${castxml_SOURCES})
+            get_filename_component(castxml_SOURCE ${castxml_SOURCE} ABSOLUTE)
+            list(APPEND castxml_CMD ${castxml_SOURCE})
+    endforeach()
 
-        # disable warnings
-        list(APPEND castxml_CMD -Wno-pragma-once-outside-header)
+    # disable warnings
+    list(APPEND castxml_CMD -Wno-pragma-once-outside-header)
 
-        # compile the sources into an xml
-        add_custom_command(OUTPUT ${castxml_XML}
-                                           COMMAND ${castxml_EXECUTABLE} ${castxml_CMD}
-                                           DEPENDS ${castxml_SOURCES}
-                                           USES_TERMINAL)
+    # compile the sources into an xml
+    add_custom_command(OUTPUT ${castxml_XML}
+                                        COMMAND ${castxml_EXECUTABLE} ${castxml_CMD}
+                                        DEPENDS ${castxml_SOURCES}
+                                        USES_TERMINAL)
 
 endfunction()
 
