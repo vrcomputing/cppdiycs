@@ -43,6 +43,7 @@ if __name__ == "__main__":
     for source in args.source:
         header.write('#include <%s>\n' % os.path.basename(source))
     header.write('\n')
+    header.write('namespace generated\n{\n')
     header.write('namespace csv\n{\n')
 
     # create header declarations
@@ -55,6 +56,7 @@ if __name__ == "__main__":
     header.write('namespace data\n{\n')
     for struct in structs:
         header.write('std::ostream& operator<<(std::ostream& os, const %s& obj);\n' % castxml_util.get_type_name(root, struct))
+    header.write('}\n')
     header.write('}\n')
 
     header.write('}\n')
@@ -73,7 +75,7 @@ if __name__ == "__main__":
             fields.append('%s' % field.get('name'))
 
         # create header implementations
-        source.write('std::ostream& csv::header::operator<<(std::ostream& os, const %s& obj)\n' % castxml_util.get_type_name(root, struct))
+        source.write('std::ostream& generated::csv::header::operator<<(std::ostream& os, const %s& obj)\n' % castxml_util.get_type_name(root, struct))
         source.write('{\n')
         if len(fields) > 0:
             source.write('\tos << "%s";\n' % args.delimiter.join(fields))
@@ -81,7 +83,7 @@ if __name__ == "__main__":
         source.write('}\n')
 
         # create data implementations
-        source.write('std::ostream& csv::data::operator<<(std::ostream& os, const %s& obj)\n' % castxml_util.get_type_name(root, struct))
+        source.write('std::ostream& generated::csv::data::operator<<(std::ostream& os, const %s& obj)\n' % castxml_util.get_type_name(root, struct))
         source.write('{\n')
         if len(fields) > 0:
             code = (' << "%s" << ' % args.delimiter).join(

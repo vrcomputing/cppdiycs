@@ -1,2 +1,4 @@
 add_subdirectory(transform_csv)
+add_subdirectory(transform_tests)
 add_subdirectory(transform_to_string)
+add_subdirectory(transform_xml)

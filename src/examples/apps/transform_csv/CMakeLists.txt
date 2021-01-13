@@ -11,9 +11,11 @@ add_executable(${TARGET_NAME}
     transform_csv.h
     transform_csv.py)
 
+add_test(${TARGET_NAME}_test ${TARGET_NAME})
+
 set_property(TARGET ${TARGET_NAME} PROPERTY FOLDER "examples")
 
-# working with absolute paths/filenames jsut to be absolutely safe
+# working with absolute paths/filenames just to be absolutely safe
 get_filename_component(INPUT_HPP  ${CMAKE_CURRENT_LIST_DIR}/transform_csv.h ABSOLUTE)
 get_filename_component(OUTPUT_HPP ${CMAKE_CURRENT_BINARY_DIR}/transform_csv.hpp ABSOLUTE)
 get_filename_component(OUTPUT_CPP ${CMAKE_CURRENT_BINARY_DIR}/transform_csv.cpp ABSOLUTE)
@@ -21,19 +23,19 @@ get_filename_component(OUTPUT_XML ${CMAKE_CURRENT_BINARY_DIR}/transform_csv.xml 
 
 castxml_compile(XML ${OUTPUT_XML} 
                 SOURCES ${INPUT_HPP} 
-				INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR} 
-				TYPES example_namespace::ExampleC example_namespace::ExampleE)
+                INCLUDE_DIRS ${CMAKE_CURRENT_LIST_DIR} 
+                TYPES example_namespace::ExampleC example_namespace::ExampleE)
 
 python_transform(SCRIPT transform_csv.py
                  INPUTS  ${OUTPUT_XML}
-				 OUTPUTS ${OUTPUT_HPP} ${OUTPUT_CPP}
-				 ARGS
-				 --xml ${OUTPUT_XML}
-				 --source ${INPUT_HPP}
-				 --hpp ${OUTPUT_HPP}
-				 --cpp ${OUTPUT_CPP}
-				 --type example_namespace::ExampleC example_namespace::ExampleE
-				 --delimiter "\",\"")
+                 OUTPUTS ${OUTPUT_HPP} ${OUTPUT_CPP}
+                 ARGS
+                 --xml ${OUTPUT_XML}
+                 --source ${INPUT_HPP}
+                 --hpp ${OUTPUT_HPP}
+                 --cpp ${OUTPUT_CPP}
+                 --type example_namespace::ExampleC example_namespace::ExampleE
+                 --delimiter "\",\"")
 
 # add the generated files to the target 
 target_include_directories(${TARGET_NAME} PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_BINARY_DIR})
