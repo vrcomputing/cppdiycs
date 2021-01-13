@@ -20,6 +20,7 @@ int main()
             std::stringstream ss;
             generated::csv::header::operator<<(cout, a) << endl;
             generated::csv::header::operator<<(ss, a);
+            const string debug = ss.str();
             assert(ss.str() == "c,s,i,f,d,name");
         }
 
@@ -27,7 +28,8 @@ int main()
         {
             std::stringstream ss;
             generated::csv::data::operator<<(cout, a) << endl;
-            generated::csv::data::operator<<(ss, a) << endl;                        
+            generated::csv::data::operator<<(ss, a);
+            const string debug = ss.str();
             assert(ss.str() == "A,1,2,3,4,Alex");
         }
     }
@@ -40,6 +42,7 @@ int main()
             std::stringstream ss;
             generated::csv::header::operator<<(cout, b) << endl;
             generated::csv::header::operator<<(ss, b);
+            const string debug = ss.str();
             assert(ss.str() == "c,s,i,f,d,name");
         }
 
@@ -47,7 +50,8 @@ int main()
         {
             std::stringstream ss;
             generated::csv::data::operator<<(cout, b) << endl;
-            generated::csv::data::operator<<(ss, b) << endl;   
+            generated::csv::data::operator<<(ss, b);
+            const string debug = ss.str();
             assert(ss.str() == "B,5,6,7,8,Bob");
         }
     }
@@ -60,6 +64,7 @@ int main()
             std::stringstream ss;
             generated::csv::header::operator<<(cout, c) << endl;
             generated::csv::header::operator<<(ss, c);
+            const string debug = ss.str();
             assert(ss.str() == "a,b,d");
         }
 
@@ -67,7 +72,8 @@ int main()
         {
             std::stringstream ss;
             generated::csv::data::operator<<(cout, c) << endl;
-            generated::csv::data::operator<<(ss, c) << endl;  
+            generated::csv::data::operator<<(ss, c);
+            const string debug = ss.str();
             assert(ss.str() == "A,1,2,3,4,Alex,B,5,6,7,8,Bob,C,9,8,7,5,Carl");
         }
     }
