@@ -19,8 +19,8 @@ function (castxml_compile)
         endif()
     endforeach()
 
-    get_filename_component(castxml_XML ${castxml_XML} DIRECTORY)
-    file(MAKE_DIRECTORY ${castxml_XML})
+    get_filename_component(castxml_XML_DIR ${castxml_XML} DIRECTORY)
+    file(MAKE_DIRECTORY ${castxml_XML_DIR})
 
     get_filename_component(castxml_C_COMPILER ${CMAKE_C_COMPILER} ABSOLUTE)
     get_filename_component(castxml_CXX_COMPILER ${CMAKE_CXX_COMPILER} ABSOLUTE)    
@@ -71,10 +71,9 @@ function (castxml_compile)
 
     # compile the sources into an xml
     add_custom_command(OUTPUT ${castxml_XML}
-                                        COMMAND ${castxml_EXECUTABLE} ${castxml_CMD}
-                                        DEPENDS ${castxml_SOURCES}
-                                        USES_TERMINAL)
-
+                       COMMAND ${castxml_EXECUTABLE} ${castxml_CMD}
+                       DEPENDS ${castxml_SOURCES}
+                       USES_TERMINAL)
 endfunction()
 
 function (python_transform)
