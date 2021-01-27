@@ -3,7 +3,7 @@
 The purpose of this project is to enable developers to create their own code syntheses in an uncomplicated and adaptable manor.
 It is __not__ the goal of this project to provide the most sophisticated generated code. Instead the project can be seen as a library of distinct examples on how to implement an individual code synthesis for specific use cases.
 
-The core functionality of this project is based on the AST XML output of the [CastXML](https://github.com/CastXML/CastXML) compiler. It provides the [*C/C++ Abstract Snytax Tree*](https://en.wikipedia.org/wiki/Abstract_syntax_tree) of the compilation comprising type names, alignments, function names, parameter names and types and many more. In many use cases these "top-level" information are sufficient for the code synthesis.
+The core functionality of this project is based on the AST XML output of the [CastXML](https://github.com/CastXML/CastXML) compiler. It provides the [*C/C++ Abstract Syntax Tree*](https://en.wikipedia.org/wiki/Abstract_syntax_tree) of the compilation comprising type names, alignments, function names, parameter names and types and many more. In many use cases these "top-level" information are sufficient for the code synthesis.
 
 # Use Cases
 
